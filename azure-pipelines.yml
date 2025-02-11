@@ -27,17 +27,17 @@ steps:
   displayName: 'Install nuget'
 
 - task: NuGetCommand@2
-  displayName: 'Restore nuget packages'
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: NuGetCommand@2
   displayName: 'Restore nuget interdependecies'
   inputs:
     command: 'restore'
     restoreSolution: '**/*.sln'
     feedsToUse: 'select'
     vstsFeed: '80c17264-11a0-4f4d-98e0-86e0e5e465ce/aad85af5-a86e-428b-8fc6-c9b8d5134211'
+
+- task: NuGetCommand@2
+  displayName: 'Restore nuget packages'
+  inputs:
+    restoreSolution: '$(solution)'
 
 - task: VSBuild@1
   displayName: 'Build in NET8'
