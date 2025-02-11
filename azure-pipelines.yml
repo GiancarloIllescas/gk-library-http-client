@@ -1,0 +1,55 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+- main
+
+pool:
+  solution: '**/*.sln'
+  vmImage: 'windows-latest'
+  name: 'Agentes_Compilacion'
+
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  major: 1
+  minor: 0
+  NUGET_ENABLE_LEGACY_CSPROJ_PACK: true
+
+name: $(major).$(minor)$(Rev:.rr)
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Install nuget'
+
+- task: NuGetCommand@2
+  displayName: 'Restore nuget packages'
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  displayName: 'Build in NET8'
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Create nupkgs'
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    versioningScheme: byBuildNumber
+
+- task: DotNetCoreCLI@2
+  displayName: 'Deploy new version of Chassis'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '80c17264-11a0-4f4d-98e0-86e0e5e465ce/aad85af5-a86e-428b-8fc6-c9b8d5134211'
