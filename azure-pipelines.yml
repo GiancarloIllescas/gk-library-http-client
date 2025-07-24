@@ -1,8 +1,3 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-
 trigger:
 - main
 
@@ -25,14 +20,6 @@ name: $(major).$(minor)$(Rev:.rr)
 steps:
 - task: NuGetToolInstaller@1
   displayName: 'Install nuget'
-
-- task: NuGetCommand@2
-  displayName: 'Restore nuget interdependecies'
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
-    vstsFeed: '80c17264-11a0-4f4d-98e0-86e0e5e465ce/aad85af5-a86e-428b-8fc6-c9b8d5134211'
 
 - task: NuGetCommand@2
   displayName: 'Restore nuget packages'
@@ -60,4 +47,4 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: '80c17264-11a0-4f4d-98e0-86e0e5e465ce/aad85af5-a86e-428b-8fc6-c9b8d5134211'
+    publishVstsFeed: '80c17264-11a0-4f4d-98e0-86e0e5e465ce/90471a02-3bf6-420e-8a67-8ac2f550d3c1'
