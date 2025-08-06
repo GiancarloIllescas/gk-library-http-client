@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting.Server;
-using System.Net;
-using System.Security.Principal;
+﻿using System.Net;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using Yape.Http.Client.Test.Entities;
+using Yape.Library.Http.Client.Test.Entities;
 
-namespace Yape.Http.Client.Test;
+namespace Yape.Library.Http.Client.Test;
 
 public class ResilientRetryTest : IntegrationTestBase
 {

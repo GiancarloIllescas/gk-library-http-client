@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Yape.Http.Client.Infraestructure.Adapters.Http
+namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 {
     public static class HttpClientExtension
     {

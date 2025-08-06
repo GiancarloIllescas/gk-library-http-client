@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Yape.Http.Client.Infraestructure.Adapters.Http;
-using Yape.Http.Client.Test.Entities;
+using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+using Yape.Library.Http.Client.Test.Entities;
 
-namespace Yape.Http.Client.Test.Services
+namespace Yape.Library.Http.Client.Test.Services
 {
     public class ResilientCircuitBreakerApiService : IResilientCircuitBreakerApiService
     {

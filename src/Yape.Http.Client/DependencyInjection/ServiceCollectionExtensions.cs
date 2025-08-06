@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
-using Yape.Http.Client.Infraestructure.Adapters.Http;
-using Yape.Http.Client.Settings;
+using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+using Yape.Library.Http.Client.Settings;
 
-namespace Yape.Http.Client.DependencyInjection;
+namespace Yape.Library.Http.Client.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {

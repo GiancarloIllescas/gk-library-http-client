@@ -1,4 +1,4 @@
-﻿namespace Yape.Http.Client.Settings
+﻿namespace Yape.Library.Http.Client.Settings
 {
     // Clase que contendrá la configuración para una política de resiliencia nombrada
     // ej. "ResiliencePolicies:MyApiPolicy"

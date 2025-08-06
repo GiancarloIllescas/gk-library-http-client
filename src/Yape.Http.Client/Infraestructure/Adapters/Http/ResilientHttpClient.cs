@@ -5,7 +5,7 @@ using System.Net; // Para HttpStatusCode.RequestTimeout
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace Yape.Http.Client.Infraestructure.Adapters.Http
+namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 {
     public class ResilientHttpClient : IResilientHttpClient
     {
@@ -71,6 +71,7 @@ namespace Yape.Http.Client.Infraestructure.Adapters.Http
             IDictionary<string, string>? headers,
             CancellationToken cancellationToken)
         {
+            HttpResponseMessage? responseError = null;
             try
             {
                 var request = new HttpRequestMessage(method, requestUri);
@@ -97,8 +98,9 @@ namespace Yape.Http.Client.Infraestructure.Adapters.Http
                 // Disparar evento si el StatusCode no es de éxito antes de EnsureSuccessStatusCode 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                    _logger.LogWarning("HTTP request failed with status {StatusCode} for {Method} {Uri}. Response: {ErrorContent}", response.StatusCode, method, requestUri, errorContent);                }
+                    responseError = response;
+                    _logger.LogWarning("HTTP request failed with status {StatusCode} for {Method} {Uri}.", response.StatusCode, method, requestUri);               
+                }
 
                 response.EnsureSuccessStatusCode(); // Lanza HttpRequestException para códigos de estado 4xx/5xx 
 
@@ -117,18 +119,15 @@ namespace Yape.Http.Client.Infraestructure.Adapters.Http
             {
                 // --- CAPTURA ESPECÍFICA DE TIMEOUT DE HTTPCLIENT ---
                 _logger.LogError(ex, "HTTP request timed out for {Method} {Uri}.", method, requestUri);
-                // Si quieres un HttpRequestException específico de timeout 
-                ErrorMapper?.HttpRequestFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
+
+                ErrorMapper?.TimeoutFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
                 
                 if (ErrorMapper == null)
                     throw new TimeoutException($"The HTTP request to {requestUri} timed out.", ex); // Re-lanzar un TimeoutException 
             }
             catch (HttpRequestException ex)
             {
-                // Este catch ya está cubierto por el Invoke de arriba para códigos de estado no exitosos 
-                // Pero es bueno tenerlo para otros HttpRequestException (ej. errores DNS, SSL) 
-                _logger.LogError(ex, "HTTP request failed for {Method} {Uri}.", method, requestUri);
-                ErrorMapper?.HttpRequestFailed(ex);
+                ErrorMapper?.HttpRequestFailed(responseError, ex);
 
                 if (ErrorMapper == null)
                     throw; // Re-lanzar para que el llamador pueda manejarlo si quiere 
@@ -136,8 +135,8 @@ namespace Yape.Http.Client.Infraestructure.Adapters.Http
             catch (TimeoutRejectedException ex) // Lanzada por la política de Timeout de Polly 
             {
                 _logger.LogError(ex, "HTTP request timed out for {Method} {Uri}.", method, requestUri);
-                // Si quieres un HttpRequestException específico de timeout 
-                ErrorMapper?.HttpRequestFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
+
+                ErrorMapper?.TimeoutFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
 
                 if (ErrorMapper == null)
                     throw new TimeoutException($"The HTTP request to {requestUri} timed out.", ex); // Re-lanzar un TimeoutException 

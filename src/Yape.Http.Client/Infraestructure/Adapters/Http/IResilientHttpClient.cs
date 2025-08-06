@@ -1,4 +1,4 @@
-﻿namespace Yape.Http.Client.Infraestructure.Adapters.Http
+﻿namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 {
     public interface IResilientHttpClient
     {
