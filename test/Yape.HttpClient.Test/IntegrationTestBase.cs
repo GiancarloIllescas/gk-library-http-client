@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using WireMock.Server;
-using Yape.Http.Client.Infraestructure.Adapters.Http;
-using Yape.Http.Client.Test.Services;
+using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+using Yape.Library.Http.Client.Test.Services;
 
-namespace Yape.Http.Client.Test;
+namespace Yape.Library.Http.Client.Test;
 
 // IClassFixture asegura que una única instancia de CustomWebApplicationFactory
 // se comparta entre todas las pruebas en la misma clase de prueba.

@@ -5,10 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WireMock.Server;
 using WireMock.Settings;
-using Yape.Http.Client.DependencyInjection;
-using Yape.Http.Client.Test.Services;
+using Yape.Library.Http.Client.DependencyInjection;
+using Yape.Library.Http.Client.Test.Services;
 
-namespace Yape.Http.Client.Test;
+namespace Yape.Library.Http.Client.Test;
 
 public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {

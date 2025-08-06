@@ -1,4 +1,4 @@
-﻿namespace Yape.Http.Client.Settings
+﻿namespace Yape.Library.Http.Client.Settings
 {
     public class ClientSettings
     {

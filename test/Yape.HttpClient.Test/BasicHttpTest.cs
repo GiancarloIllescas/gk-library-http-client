@@ -4,10 +4,10 @@ using System.Net;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using Yape.Http.Client.Infraestructure.Adapters.Http;
-using Yape.Http.Client.Test.Entities;
+using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+using Yape.Library.Http.Client.Test.Entities;
 
-namespace Yape.Http.Client.Test;
+namespace Yape.Library.Http.Client.Test;
 
 public class BasicHttpTest : IntegrationTestBase
 {
@@ -127,7 +127,7 @@ public class BasicHttpTest : IntegrationTestBase
         var loggger = new Mock<ILoggerFactory>();
         var errorMapper = new Mock<ErrorMapperBase>(loggger.Object);
 
-        errorMapper.Setup(x => x.HttpRequestFailed(It.IsAny<HttpRequestException>()));
+        errorMapper.Setup(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()));
 
         _basicApiService.ErrorMapper = errorMapper.Object;
 
@@ -136,7 +136,7 @@ public class BasicHttpTest : IntegrationTestBase
 
         // Assertions
         Assert.Null(response);
-        errorMapper.Verify(x => x.HttpRequestFailed(It.IsAny<HttpRequestException>()), Times.Once());
+        errorMapper.Verify(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()), Times.Once());
     }
 
 

@@ -3,7 +3,7 @@ using System.Net;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 
-namespace Yape.Http.Client.Test;
+namespace Yape.Library.Http.Client.Test;
 
 public class ResilientCircuitBrekerTest : IntegrationTestBase
 {

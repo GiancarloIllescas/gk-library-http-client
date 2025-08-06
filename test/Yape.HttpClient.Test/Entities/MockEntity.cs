@@ -1,4 +1,4 @@
-﻿namespace Yape.Http.Client.Test.Entities
+﻿namespace Yape.Library.Http.Client.Test.Entities
 {
     public class MockEntity
     {
