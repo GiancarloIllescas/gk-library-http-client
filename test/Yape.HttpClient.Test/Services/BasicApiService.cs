@@ -10,9 +10,9 @@ namespace Yape.Library.Http.Client.Test.Services
 
         public ErrorMapperBase? ErrorMapper { get; set; }
 
-        public BasicApiService(HttpClient httpClient, ILoggerFactory loggerFactory)
+        public BasicApiService(HttpClient httpClient, ILogger<BasicApiService> logger)
         {
-            _httpClient = httpClient.CreateExtension(loggerFactory);
+            _httpClient = httpClient.CreateExtension(logger);
         }
 
         public async Task<MockEntity?> GetDataAsync()

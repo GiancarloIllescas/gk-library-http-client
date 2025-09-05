@@ -124,8 +124,8 @@ public class BasicHttpTest : IntegrationTestBase
             .RespondWith(Response.Create()
                 .WithStatusCode(HttpStatusCode.InternalServerError));
 
-        var loggger = new Mock<ILoggerFactory>();
-        var errorMapper = new Mock<ErrorMapperBase>(loggger.Object);
+        var logger = new Mock<ILogger>();
+        var errorMapper = new Mock<ErrorMapperBase>(logger.Object);
 
         errorMapper.Setup(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()));
 

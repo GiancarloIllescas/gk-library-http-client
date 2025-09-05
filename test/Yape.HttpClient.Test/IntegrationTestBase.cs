@@ -12,11 +12,11 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
     protected readonly CustomWebApplicationFactory<Program> _factory;
     protected readonly WireMockServer _mockServer;
 
-    protected readonly IResilientHttpClient _client;
-    protected readonly IBasicApiService _basicApiService;
-    protected readonly IResilientBasicApiService _resilientBasicApiService;
-    protected readonly IResilientRetryApiService _resilientRetryApiService;
-    protected readonly IResilientCircuitBreakerApiService _resilientCircuitBreakerApiService;
+    protected readonly IResilientHttpClient? _client;
+    protected readonly IBasicApiService? _basicApiService;
+    protected readonly IResilientBasicApiService? _resilientBasicApiService;
+    protected readonly IResilientRetryApiService? _resilientRetryApiService;
+    protected readonly IResilientCircuitBreakerApiService? _resilientCircuitBreakerApiService;
 
     public IntegrationTestBase(CustomWebApplicationFactory<Program> factory)
     {

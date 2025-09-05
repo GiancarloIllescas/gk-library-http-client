@@ -4,9 +4,9 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 {
     public static class HttpClientExtension
     {
-        public static IResilientHttpClient CreateExtension(this HttpClient client, ILoggerFactory loggerFactory)
+        public static IResilientHttpClient CreateExtension(this HttpClient client, ILogger logger)
         {
-            return new ResilientHttpClient(client, loggerFactory);
+            return new ResilientHttpClient(client, logger);
         }
     }
 }

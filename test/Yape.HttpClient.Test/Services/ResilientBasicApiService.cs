@@ -8,9 +8,9 @@ namespace Yape.Library.Http.Client.Test.Services
     {
         private readonly IResilientHttpClient _httpClient;
 
-        public ResilientBasicApiService(HttpClient httpClient, ILoggerFactory loggerFactory)
+        public ResilientBasicApiService(HttpClient httpClient, ILogger<ResilientBasicApiService> logger)
         {
-            _httpClient = httpClient.CreateExtension(loggerFactory);
+            _httpClient = httpClient.CreateExtension(logger);
         }
 
         public async Task<MockEntity?> GetDataAsync()
