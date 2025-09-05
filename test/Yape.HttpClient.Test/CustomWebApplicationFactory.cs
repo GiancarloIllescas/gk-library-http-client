@@ -63,7 +63,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
             var resilientCircuitBreakerApiClientBuilder = services.AddResilientHttpClient<IResilientCircuitBreakerApiService, ResilientCircuitBreakerApiService>("ResilientCircuitBrekerApiClient", configuration);
 
 
-            // Asigna el handler para aceptar el certificado que requiere uan llamada https
+            // Asigna el handler para aceptar el certificado que requiere una llamada https
             //
             foreach (var item in new IHttpClientBuilder[] { basicApiClientBuilder, 
                                                             resilientBasicApiClientBuilder, 

@@ -2,6 +2,7 @@
 using Polly.CircuitBreaker;
 using Polly.Timeout; // Para TimeoutRejectedException
 using System.Net; // Para HttpStatusCode.RequestTimeout 
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -10,17 +11,17 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
     public class ResilientHttpClient : IResilientHttpClient
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<ResilientHttpClient> _logger;
-        private readonly JsonSerializerOptions _jsonSerializerOptions; // Opcional: para control fino de serialización 
+        private readonly ILogger _logger;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public ErrorMapperBase? ErrorMapper {  get; set; }
 
         public ResilientHttpClient(
             HttpClient httpClient,
-            ILoggerFactory loggerFactory)
+            ILogger logger)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _logger = loggerFactory.CreateLogger<ResilientHttpClient>();
+            _logger = logger;
 
             _jsonSerializerOptions = new JsonSerializerOptions
             {
@@ -79,6 +80,7 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
                 // Añadir contenido para POST y PUT 
                 if (data != null && (method == HttpMethod.Post || method == HttpMethod.Put))
                 {
+                    // Esto asigna el encabezado Content-Type automáticamente con "application/json"
                     request.Content = JsonContent.Create(data, options: _jsonSerializerOptions);
                 }
 
