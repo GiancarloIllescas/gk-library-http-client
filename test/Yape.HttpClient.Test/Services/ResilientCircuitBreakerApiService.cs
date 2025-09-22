@@ -8,9 +8,9 @@ namespace Yape.Library.Http.Client.Test.Services
     {
         private readonly IResilientHttpClient _httpClient;
 
-        public ResilientCircuitBreakerApiService(HttpClient httpClient, ILogger<ResilientCircuitBreakerApiService> logger)
+        public ResilientCircuitBreakerApiService(HttpClient httpClient, IResilienceHttpFactory resilienceHttpFactory)
         {
-            _httpClient = httpClient.CreateExtension(logger);
+            _httpClient = resilienceHttpFactory.Create(httpClient);
         }
 
         public async Task<MockEntity?> GetDataAsync()

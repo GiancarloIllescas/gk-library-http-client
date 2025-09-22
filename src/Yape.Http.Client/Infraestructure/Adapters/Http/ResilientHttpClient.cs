@@ -2,7 +2,6 @@
 using Polly.CircuitBreaker;
 using Polly.Timeout; // Para TimeoutRejectedException
 using System.Net; // Para HttpStatusCode.RequestTimeout 
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -15,6 +14,8 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public ErrorMapperBase? ErrorMapper {  get; set; }
+
+        public HttpHeaders? HeadersRequired { get; set; }
 
         public ResilientHttpClient(
             HttpClient httpClient,
@@ -82,6 +83,13 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
                 {
                     // Esto asigna el encabezado Content-Type automáticamente con "application/json"
                     request.Content = JsonContent.Create(data, options: _jsonSerializerOptions);
+                }
+
+                // Aplica los headers que se recuperan del request en el HttpContext
+                //
+                if(this.HeadersRequired != null)
+                {
+                    this.HeadersRequired.AddHeaders(ref headers);
                 }
 
                 // Aplicar headers específicos de la solicitud 
@@ -163,6 +171,9 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
             return default; // Para métodos que no esperan una respuesta TResponse 
 
         }
+
+
+
     }
 
 }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Moq;
 using WireMock.Server;
 using WireMock.Settings;
 using Yape.Library.Http.Client.DependencyInjection;
@@ -50,6 +52,20 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
         builder.ConfigureServices(services =>
         {
+            // Add HttpContext Headers
+            //
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            var context = new DefaultHttpContext();
+            context.Request.Headers["Channel"] = "006";
+            context.Request.Headers["Request-Date"] = "2025-06-01T17:15:20.509-0400";
+            context.Request.Headers["X-Correlation-Id"] = "c22abab4-d709-4d85-9e98-45657a0eec44";
+
+            mockHttpContextAccessor
+                .Setup(x => x.HttpContext)
+                .Returns(context);
+
+            services.AddSingleton<IHttpContextAccessor>(x=> mockHttpContextAccessor.Object);
+
 
             var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
 

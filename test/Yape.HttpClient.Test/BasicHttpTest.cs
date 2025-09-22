@@ -157,4 +157,37 @@ public class BasicHttpTest : IntegrationTestBase
         Assert.IsType<TimeoutException>(exception);
     }
 
+    /// <summary>
+    /// Desde WebHostFactory se agregan en el HttpContext los headers que se inyectan 
+    /// en la llamada HttpClient
+    /// </summary>
+    /// <returns></returns>
+    [Fact]
+    public async Task Get_OK_WhenBasicApiSendHeadersRequired()
+    {
+        // Arrange
+        _mockServer
+            .Given(Request.Create().WithPath("/basic-api/data").UsingGet()
+                .WithHeader("Channel", "006")
+                .WithHeader("Request-Date", "2025-06-01T17:15:20.509-0400")
+                .WithHeader("X-Correlation-Id", "c22abab4-d709-4d85-9e98-45657a0eec44"))
+            .RespondWith(Response.Create()
+                .WithStatusCode(HttpStatusCode.OK)
+                .WithHeader("Content-Type", "application/json")
+                .WithBody(JsonSerializer.Serialize(new { id = 1, description = "Mocked Data" })));
+
+        // Act
+        var account = await _basicApiService.GetDataAsync();
+
+        // Assert
+        Assert.NotNull(account);
+        Assert.Equal("Mocked Data", account.Description);
+
+        // Verificar que tu aplicación realmente llamó al mock server
+        var findEntries = _mockServer.FindLogEntries(
+            Request.Create().WithPath("/basic-api/data").UsingGet()
+        );
+        Assert.Single(findEntries);
+    }
+
 }
