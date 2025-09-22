@@ -10,9 +10,9 @@ namespace Yape.Library.Http.Client.Test.Services
 
         public ErrorMapperBase? ErrorMapper { get; set; }
 
-        public BasicApiService(HttpClient httpClient, ILogger<BasicApiService> logger)
+        public BasicApiService(HttpClient httpClient, IResilienceHttpFactory resilienceHttpFactory)
         {
-            _httpClient = httpClient.CreateExtension(logger);
+            _httpClient = resilienceHttpFactory.Create(httpClient);
         }
 
         public async Task<MockEntity?> GetDataAsync()
@@ -44,4 +44,5 @@ namespace Yape.Library.Http.Client.Test.Services
         Task Delete(int id);
         Task<MockEntity?> Update(MockEntity data);
     }
+
 }

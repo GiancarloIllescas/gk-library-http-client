@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
 using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
 using Yape.Library.Http.Client.Settings;
@@ -15,6 +16,8 @@ public static class ServiceCollectionExtensions
         where TClient : class
         where TImplementation : class, TClient
     {
+
+        services.TryAddScoped<IResilienceHttpFactory, ResilienceHttpFactory>();
 
         // 1. Configurar las opciones específicas de este cliente (BaseAddress, DefaultHeaders, etc.)
         services.Configure<ClientSettings>(configuration.GetSection($"HttpClients:{clientName}"));
@@ -125,13 +128,13 @@ public static class ServiceCollectionExtensions
     }
 
     // Sobrecarga para registrar solo el IResilientHttpClient sin Typed Client específico
-    public static IHttpClientBuilder AddResilientHttpClient(
-        this IServiceCollection services,
-        string clientName,
-        IConfiguration configuration)
-    {
-        return services.AddResilientHttpClient<IResilientHttpClient, ResilientHttpClient>(clientName, configuration);
-    }
+    //public static IHttpClientBuilder AddResilientHttpClient(
+    //    this IServiceCollection services,
+    //    string clientName,
+    //    IConfiguration configuration)
+    //{
+    //    return services.AddResilientHttpClient<IResilientHttpClient, ResilientHttpClient>(clientName, configuration);
+    //}
 }
 
 

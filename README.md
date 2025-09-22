@@ -21,9 +21,9 @@ public class BasicApiService : IBasicApiService
 {
     private readonly IResilientHttpClient _httpClient;
 
-    public BasicApiService(HttpClient httpClient, ILoggerFactory loggerFactory)
+    public BasicApiService(HttpClient httpClient, IResilienceHttpFactory resilienceHttpFactory)
     {
-        _httpClient = httpClient.CreateExtension(loggerFactory);
+        _httpClient = resilienceHttpFactory.Create(httpClient);
     }
 
     public async Task<MockEntity> GetDataAsync()
@@ -198,18 +198,18 @@ Para luego asignarla en el servicio
 ```csharp
     public class BasicApiService : IBasicApiService
     {
-        private readonly ILoggerFactory _loggerFactory;
+        private readonly ILogger<BasicApiService> _logger;
         private readonly IResilientHttpClient _httpClient;
 
-        public BasicApiService(HttpClient httpClient, ILoggerFactory loggerFactory)
+        public BasicApiService(HttpClient httpClient,       IResilienceHttpFactory resilienceHttpFactory, ILogger<BasicApiService> logger)
         {
-            _loggerFactory = loggerFactory;
-            _httpClient = httpClient.CreateExtension(loggerFactory);
+            _logger_ = logger;
+            _httpClient = resilienceHttpFactory.Create(httpClient);
         }
 
         public async Task<MockEntity?> Update(MockEntity data)
         {
-            _httpClient.ErrorMapper = new ErrorMapperMock(_loggerFactory);
+            _httpClient.ErrorMapper = new ErrorMapperMock(_logger);
 
             return await _httpClient.PutAsync<MockEntity, MockEntity>("/basic-api", data);
         }
