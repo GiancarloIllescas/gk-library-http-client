@@ -2,8 +2,6 @@
 {
     public interface IResilientHttpClient
     {
-        ErrorMapperBase? ErrorMapper { get; set; }
-
         // Métodos HTTP para obtener y enviar datos, serializando/deserializando automáticamente 
         Task<TResponse?> GetAsync<TResponse>(string requestUri, IDictionary<string, string>? headers = null, CancellationToken cancellationToken = default);
         Task<TResponse?> PostAsync<TRequest, TResponse>(string requestUri, TRequest data, IDictionary<string, string>? headers = null, CancellationToken cancellationToken = default);

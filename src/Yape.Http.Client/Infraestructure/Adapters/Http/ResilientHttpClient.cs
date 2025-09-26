@@ -13,16 +13,20 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
         private readonly ILogger _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public ErrorMapperBase? ErrorMapper {  get; set; }
-
-        public HttpHeaders? HeadersRequired { get; set; }
+        private readonly HttpHeaders? _headersRequired;
+        private readonly IHttpErrorMapper _errorMapper;
 
         public ResilientHttpClient(
             HttpClient httpClient,
-            ILogger logger)
+            ILogger logger,
+            IHttpErrorMapper errorMapper,
+            HttpHeaders? headersRequired)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _logger = logger;
+
+            _headersRequired = headersRequired;
+            _errorMapper = errorMapper;
 
             _jsonSerializerOptions = new JsonSerializerOptions
             {
@@ -87,9 +91,9 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 
                 // Aplica los headers que se recuperan del request en el HttpContext
                 //
-                if(this.HeadersRequired != null)
+                if(_headersRequired != null)
                 {
-                    this.HeadersRequired.AddHeaders(ref headers);
+                    _headersRequired.AddHeaders(ref headers);
                 }
 
                 // Aplicar headers específicos de la solicitud 
@@ -130,41 +134,43 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
                 // --- CAPTURA ESPECÍFICA DE TIMEOUT DE HTTPCLIENT ---
                 _logger.LogError(ex, "HTTP request timed out for {Method} {Uri}.", method, requestUri);
 
-                ErrorMapper?.TimeoutFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
+                var result = _errorMapper.TimeoutFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
                 
-                if (ErrorMapper == null)
+                if (result)
                     throw new TimeoutException($"The HTTP request to {requestUri} timed out.", ex); // Re-lanzar un TimeoutException 
             }
             catch (HttpRequestException ex)
             {
-                ErrorMapper?.HttpRequestFailed(responseError, ex);
+                _logger.LogError(ex, "HTTP Request for {Method} {Uri}.", method, requestUri);
 
-                if (ErrorMapper == null)
+                var result = await _errorMapper.HttpRequestFailed(responseError, ex);
+
+                if (result)
                     throw; // Re-lanzar para que el llamador pueda manejarlo si quiere 
             }
             catch (TimeoutRejectedException ex) // Lanzada por la política de Timeout de Polly 
             {
                 _logger.LogError(ex, "HTTP request timed out for {Method} {Uri}.", method, requestUri);
 
-                ErrorMapper?.TimeoutFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
+                var result = _errorMapper.TimeoutFailed(new HttpRequestException($"Request timed out.", ex, HttpStatusCode.RequestTimeout));
 
-                if (ErrorMapper == null)
+                if (result)
                     throw new TimeoutException($"The HTTP request to {requestUri} timed out.", ex); // Re-lanzar un TimeoutException 
             }
             catch(BrokenCircuitException ex)
             {
-                _logger.LogError(ex, "HTTP request timed out for {Method} {Uri}.", method, requestUri);
-                ErrorMapper?.BrokenCircuitFailed(ex);
+                _logger.LogError(ex, "HTTP Broken Circuit for {Method} {Uri}.", method, requestUri);
+                var result = _errorMapper.BrokenCircuitFailed(ex);
 
-                if (ErrorMapper == null)
+                if (result)
                     throw;
             }
             catch (Exception ex) // Captura cualquier otra excepción (deserialización, red, etc.) 
             {
                 _logger.LogError(ex, "An unexpected error occurred during {Method} request to {Uri}.", method, requestUri);
-                ErrorMapper?.GeneralErrorOccurred(ex);
+                var result = _errorMapper.GeneralErrorOccurred(ex);
 
-                if (ErrorMapper == null)
+                if (result)
                     throw;
             }
 

@@ -5,7 +5,7 @@ using Polly;
 using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
 using Yape.Library.Http.Client.Settings;
 
-namespace Yape.Library.Http.Client.DependencyInjection;
+namespace Yape.Library.Http.Client.Extensions;
 
 public static class ServiceCollectionExtensions
 {

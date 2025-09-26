@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Moq;
 using WireMock.Server;
 using WireMock.Settings;
-using Yape.Library.Http.Client.DependencyInjection;
+using Yape.Library.Http.Client.Extensions;
+using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
 using Yape.Library.Http.Client.Test.Services;
 
 namespace Yape.Library.Http.Client.Test;
@@ -52,6 +54,10 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
         builder.ConfigureServices(services =>
         {
+            var serviceProvider = services.BuildServiceProvider();
+
+            var configuration = serviceProvider.GetService<IConfiguration>();
+
             // Add HttpContext Headers
             //
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -67,10 +73,21 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
             services.AddSingleton<IHttpContextAccessor>(x=> mockHttpContextAccessor.Object);
 
 
-            var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+            // Custom error mapper
+            //
+            //var logger = serviceProvider.GetService<ILogger<ResilientHttpClient>>();
+            var errorMapper = new Mock<IHttpErrorMapper>();
+
+            errorMapper.Setup(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()))
+                            .Returns(Task.FromResult(false)); //el false hara que no se relance el exception
+
+            services.AddScoped<IHttpErrorMapper>(x => errorMapper.Object);
+
 
 
             var basicApiClientBuilder = services.AddResilientHttpClient<IBasicApiService, BasicApiService>("BasicApiClient", configuration);
+            
+            var basicApiCustomErrorService = services.AddResilientHttpClient<IBasicApiCustomErrorService, BasicApiCustomErrorService>("BasicApiClient", configuration);
 
             var resilientBasicApiClientBuilder = services.AddResilientHttpClient<IResilientBasicApiService, ResilientBasicApiService>("ResilientBasicApiClient", configuration);
             
@@ -81,7 +98,8 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
             // Asigna el handler para aceptar el certificado que requiere una llamada https
             //
-            foreach (var item in new IHttpClientBuilder[] { basicApiClientBuilder, 
+            foreach (var item in new IHttpClientBuilder[] { basicApiClientBuilder,
+                                                            basicApiCustomErrorService,
                                                             resilientBasicApiClientBuilder, 
                                                             resilientRetryApiClientBuilder,
                                                             resilientCircuitBreakerApiClientBuilder})
