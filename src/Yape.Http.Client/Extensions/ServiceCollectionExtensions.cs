@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly;
+using Yape.Library.Http.Client.Domain.Port;
 using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
 using Yape.Library.Http.Client.Settings;
 

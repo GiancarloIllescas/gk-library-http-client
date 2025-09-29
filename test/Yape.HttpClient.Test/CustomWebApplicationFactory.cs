@@ -8,8 +8,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using WireMock.Server;
 using WireMock.Settings;
+using Yape.Library.Http.Client.Domain.Port;
 using Yape.Library.Http.Client.Extensions;
-using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
 using Yape.Library.Http.Client.Test.Services;
 
 namespace Yape.Library.Http.Client.Test;
@@ -75,7 +75,6 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
             // Custom error mapper
             //
-            //var logger = serviceProvider.GetService<ILogger<ResilientHttpClient>>();
             var errorMapper = new Mock<IHttpErrorMapper>();
 
             errorMapper.Setup(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()))

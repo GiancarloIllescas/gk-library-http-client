@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Yape.Library.ErrorBuilder.Domain.Builder;
+using Yape.Library.Http.Client.Domain.Port;
 
 
 namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http

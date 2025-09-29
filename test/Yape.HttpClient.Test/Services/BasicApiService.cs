@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+using Yape.Library.Http.Client.Domain.Port;
 using Yape.Library.Http.Client.Test.Entities;
 
 namespace Yape.Library.Http.Client.Test.Services

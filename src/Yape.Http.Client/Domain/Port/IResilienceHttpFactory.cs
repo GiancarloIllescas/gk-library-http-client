@@ -1,4 +1,6 @@
-﻿namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
+﻿using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+
+namespace Yape.Library.Http.Client.Domain.Port
 {
     public interface IResilienceHttpFactory
     {

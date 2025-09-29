@@ -4,6 +4,7 @@ using Polly.Timeout; // Para TimeoutRejectedException
 using System.Net; // Para HttpStatusCode.RequestTimeout 
 using System.Net.Http.Json;
 using System.Text.Json;
+using Yape.Library.Http.Client.Domain.Port;
 
 namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 {

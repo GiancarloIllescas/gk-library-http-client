@@ -1,6 +1,6 @@
 ﻿using Polly.CircuitBreaker;
 
-namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
+namespace Yape.Library.Http.Client.Domain.Port
 {
     public interface IHttpErrorMapper
     {

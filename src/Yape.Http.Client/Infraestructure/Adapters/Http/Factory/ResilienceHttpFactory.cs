@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Yape.Library.Http.Client.Domain.Port;
 
 namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 {
