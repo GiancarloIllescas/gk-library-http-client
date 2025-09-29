@@ -73,17 +73,6 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
             services.AddSingleton<IHttpContextAccessor>(x=> mockHttpContextAccessor.Object);
 
 
-            // Custom error mapper
-            //
-            var errorMapper = new Mock<IHttpErrorMapper>();
-
-            errorMapper.Setup(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()))
-                            .Returns(Task.FromResult(false)); //el false hara que no se relance el exception
-
-            services.AddScoped<IHttpErrorMapper>(x => errorMapper.Object);
-
-
-
             var basicApiClientBuilder = services.AddResilientHttpClient<IBasicApiService, BasicApiService>("BasicApiClient", configuration);
             
             var basicApiCustomErrorService = services.AddResilientHttpClient<IBasicApiCustomErrorService, BasicApiCustomErrorService>("BasicApiClient", configuration);

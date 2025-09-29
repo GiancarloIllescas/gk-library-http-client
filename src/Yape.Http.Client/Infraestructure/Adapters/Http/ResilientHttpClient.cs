@@ -15,12 +15,12 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         private readonly HttpHeaders? _headersRequired;
-        private readonly IHttpErrorMapper _errorMapper;
+        private readonly HttpErrorMapperBase _errorMapper;
 
         public ResilientHttpClient(
             HttpClient httpClient,
             ILogger logger,
-            IHttpErrorMapper errorMapper,
+            HttpErrorMapperBase errorMapper,
             HttpHeaders? headersRequired)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));

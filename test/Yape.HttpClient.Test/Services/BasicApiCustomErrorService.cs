@@ -13,12 +13,12 @@ namespace Yape.Library.Http.Client.Test.Services
         private readonly IResilientHttpClient _httpClient;
 
         public BasicApiCustomErrorService(HttpClient httpClient, 
-            IResilienceHttpFactory resilienceHttpFactory, 
-            IHttpErrorMapper errorMapper)
+            IResilienceHttpFactory resilienceHttpFactory,
+            ILogger<BasicApiCustomErrorService> logger)
         {
             var options = new HttpClientOptions()
             {
-                ErrorMapper = errorMapper
+                ErrorMapper = new CustomErrorMapperTest(logger)
             };
 
             _httpClient = resilienceHttpFactory.Create(httpClient, options);
@@ -33,6 +33,19 @@ namespace Yape.Library.Http.Client.Test.Services
     public interface IBasicApiCustomErrorService
     {
         Task<MockEntity?> GetDataAsync();
+    }
+
+    public class CustomErrorMapperTest : HttpErrorMapperBase
+    {
+        public CustomErrorMapperTest(ILogger looger) : base(looger)
+        {
+
+        }
+
+        public override Task<bool> HttpRequestFailed(HttpResponseMessage response, HttpRequestException ex)
+        {
+            return Task.FromResult(false); //anulo para que no se relance el exception de http
+        }
     }
 
 }

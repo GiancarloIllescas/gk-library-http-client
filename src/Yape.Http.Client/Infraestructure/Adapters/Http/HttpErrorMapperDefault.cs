@@ -10,16 +10,14 @@ using Yape.Library.Http.Client.Domain.Port;
 
 namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
 {
-    public class HttpErrorMapperDefault : IHttpErrorMapper
+    public class HttpErrorMapperDefault : HttpErrorMapperBase
     {
-        protected readonly ILogger _logger;
 
-        public HttpErrorMapperDefault(ILogger logger)
+        public HttpErrorMapperDefault(ILogger logger) : base(logger)
         {
-            _logger = logger;
         }
 
-        public async virtual Task<bool> HttpRequestFailed(HttpResponseMessage response, HttpRequestException ex)
+        public async override Task<bool> HttpRequestFailed(HttpResponseMessage response, HttpRequestException ex)
         {
             bool result = false;
 
@@ -57,20 +55,6 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
             return result;
         }
 
-        public virtual bool TimeoutFailed(HttpRequestException ex)
-        {
-            return true;
-        }
-
-        public virtual bool BrokenCircuitFailed(BrokenCircuitException ex)
-        {
-            return true;
-        }
-
-        public virtual bool GeneralErrorOccurred(Exception ex)
-        {
-            return true;
-        }
 
     }
 }

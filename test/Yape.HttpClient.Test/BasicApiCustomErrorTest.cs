@@ -1,12 +1,6 @@
-using Microsoft.Extensions.Logging;
-using Moq;
-using System;
 using System.Net;
-using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
-using Yape.Library.Http.Client.Test.Entities;
 
 namespace Yape.Library.Http.Client.Test;
 

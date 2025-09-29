@@ -28,7 +28,7 @@ namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
                 headersRequired = new HttpHeaders(_httpContextAccessor);
             }
 
-            IHttpErrorMapper errorMapper = new HttpErrorMapperDefault(_logger);
+            HttpErrorMapperBase errorMapper = new HttpErrorMapperDefault(_logger);
             if (httpClientOptions.ErrorMapper != null)
             {
                 errorMapper = httpClientOptions.ErrorMapper;
