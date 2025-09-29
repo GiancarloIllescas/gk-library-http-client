@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+using Yape.Library.Http.Client.Domain.Port;
 using Yape.Library.Http.Client.Test.Entities;
 
 namespace Yape.Library.Http.Client.Test.Services
@@ -8,9 +8,8 @@ namespace Yape.Library.Http.Client.Test.Services
     {
         private readonly IResilientHttpClient _httpClient;
 
-        public ErrorMapperBase? ErrorMapper { get; set; }
-
-        public BasicApiService(HttpClient httpClient, IResilienceHttpFactory resilienceHttpFactory)
+        public BasicApiService(HttpClient httpClient, 
+            IResilienceHttpFactory resilienceHttpFactory)
         {
             _httpClient = resilienceHttpFactory.Create(httpClient);
         }
@@ -29,8 +28,6 @@ namespace Yape.Library.Http.Client.Test.Services
         }
         public async Task<MockEntity?> Update(MockEntity data)
         {
-            _httpClient.ErrorMapper = this.ErrorMapper;
-
             return await _httpClient.PutAsync<MockEntity, MockEntity>("/basic-api", data);
         }
 
@@ -38,7 +35,6 @@ namespace Yape.Library.Http.Client.Test.Services
 
     public interface IBasicApiService
     {
-        public ErrorMapperBase ErrorMapper { get; set; }
         Task<MockEntity?> GetDataAsync();
         Task<MockEntity?> Create(MockEntity data);
         Task Delete(int id);

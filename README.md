@@ -3,6 +3,8 @@ Libreria para Request HTTP implementando configuracion de TimeOut, Retry y Circu
 
 # Instalacion
 
+Se debe agregar la referencia a la libreria ```Yape.Library.Http.Client ```
+
 
 # Integracion en el proyecto
 
@@ -49,7 +51,7 @@ uso de funcionalidad mejorada, por eso es que se utiliza el ```CreateExtension()
 Utilizar el namespace 
 
 ```csharp
-using Yape.Http.Client.DependencyInjection;
+using Yape.Library.Http.Client.Extensions;
 ```
 
 Para luego registrar el servicio
@@ -174,49 +176,95 @@ La libreria retorna los errores:
 - Exception
 
 Capturar estos errores se puede realizar mediante el uso del tradicional ```try..catch```, pero
-tambien se puede hacer uso de un manejador de los errores que anularia propagar el error.
+tambien se puede hacer uso de un manejador de los errores.
 
-Como base se cuenta con una clase ```ErrorMapperBase``` la cual puede extenderse
+Como base se cuenta con la interface ```IHttpErrorMapper``` la cual puede extenderse
 
 ```csharp
-    public class ErrorMapperMock : ErrorMapperBase
+    public class HttpErrorMapperCustom: IHttpErrorMapper
     {
-        public ErrorMapperMock(ILoggerFactory loggerFactory) : base(loggerFactory)
-        {
-        }
-
-        public override void HttpRequestFailed(HttpRequestException ex)
-        {
-            // codigo ante un error
-        }
+        //aqui implementacion
     }
+```
+
+Se debe registrar esta nueve interface
+
+```csharp
+ services.AddScoped<IHttpErrorMapper, HttpErrorMapperCustom>();
 ```
 
 Para luego asignarla en el servicio
 
 
 ```csharp
-    public class BasicApiService : IBasicApiService
+public class BasicApiService : IBasicApiService
+{
+    private readonly IResilientHttpClient _httpClient;
+
+    public BasicApiService(HttpClient httpClient, 
+        IResilienceHttpFactory resilienceHttpFactory, 
+        IHttpErrorMapper errorMapper)
     {
-        private readonly ILogger<BasicApiService> _logger;
-        private readonly IResilientHttpClient _httpClient;
-
-        public BasicApiService(HttpClient httpClient,       IResilienceHttpFactory resilienceHttpFactory, ILogger<BasicApiService> logger)
+        var options = new HttpClientOptions()
         {
-            _logger_ = logger;
-            _httpClient = resilienceHttpFactory.Create(httpClient);
-        }
+            ErrorMapper = errorMapper
+        };
 
-        public async Task<MockEntity?> Update(MockEntity data)
-        {
-            _httpClient.ErrorMapper = new ErrorMapperMock(_logger);
-
-            return await _httpClient.PutAsync<MockEntity, MockEntity>("/basic-api", data);
-        }
-
-        .
-        .
-
+        _httpClient = resilienceHttpFactory.Create(httpClient, options);
     }
+
+    public async Task<MockEntity?> GetDataAsync()
+    {
+        return await _httpClient.GetAsync<MockEntity>("/basic-api/data");
+    }
+}
 ```
 
+Asignar el error custom al crear la libreria http se realiza por medio de un objeto ```HttpClientOptions```
+
+### 5. Asignar Headers Requeridos
+
+Por defecto la libreria va a buscar los headers
+
+- X-Correlation-Id
+- Request-Date
+- Channel
+
+y agregarlo en el request.
+
+Los busca directamente haciendo uso de ```HttpContext```
+
+Si no se quiere enviar los header por defecto requeridos se debe indicar por medio de options
+
+```csharp
+var options = new HttpClientOptions()
+{
+    IncludeHeadersRequired = false
+};
+```    
+
+En el servicio se define al crear la instancia
+
+```csharp
+public class BasicApiService : IBasicApiService
+{
+    private readonly IResilientHttpClient _httpClient;
+
+    public BasicApiService(HttpClient httpClient, 
+        IResilienceHttpFactory resilienceHttpFactory, 
+        IHttpErrorMapper errorMapper)
+    {
+        var options = new HttpClientOptions()
+        {
+            IncludeHeadersRequired = false
+        };
+
+        _httpClient = resilienceHttpFactory.Create(httpClient, options);
+    }
+
+    public async Task<MockEntity?> GetDataAsync()
+    {
+        return await _httpClient.GetAsync<MockEntity>("/basic-api/data");
+    }
+}
+```

@@ -1,10 +1,9 @@
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+using Yape.Library.ErrorBuilder.Domain;
 using Yape.Library.Http.Client.Test.Entities;
 
 namespace Yape.Library.Http.Client.Test;
@@ -95,18 +94,15 @@ public class BasicHttpTest : IntegrationTestBase
     [Fact]
     public async Task Get_ShouldFail_WhenBasicApiReturnsHttpRequestException()
     {
-        var request = new MockEntity() { Id = 1, Name = "Name Mock", Description = "Mocked Data" };
-
         // Arrange
         _mockServer
             .Given(Request.Create().WithPath("/basic-api/data").UsingGet())
             .RespondWith(Response.Create()
-                .WithStatusCode(HttpStatusCode.InternalServerError)
-                .WithHeader("Content-Type", "application/json")
-                .WithBody(JsonSerializer.Serialize(request)));
+                .WithStatusCode(HttpStatusCode.InternalServerError));
 
         // Act
         var exception = await Record.ExceptionAsync(async () => await _basicApiService.GetDataAsync());
+
 
         // Assertions
         Assert.NotNull(exception);
@@ -114,31 +110,30 @@ public class BasicHttpTest : IntegrationTestBase
     }
 
     [Fact]
-    public async Task Put_ShouldFail_HandlerExceptionWithErrorMapper()
+    public async Task Get_ShouldFail_WhenBasicApi_Returns_ProblemDetails_Exception()
     {
-        var request = new MockEntity() { Id = 1, Name = "Name Mock", Description = "Mocked Data" };
-
         // Arrange
+        var problemDetails = new ProblemDetails()
+        {
+            Status = (int)HttpStatusCode.BadRequest,
+            Type = "tipo",
+            Title = "titutlo",
+            Detail = "detalle"
+        };
         _mockServer
-            .Given(Request.Create().WithPath("/basic-api").UsingPut())
+            .Given(Request.Create().WithPath("/basic-api/data").UsingGet())
             .RespondWith(Response.Create()
-                .WithStatusCode(HttpStatusCode.InternalServerError));
-
-        var logger = new Mock<ILogger>();
-        var errorMapper = new Mock<ErrorMapperBase>(logger.Object);
-
-        errorMapper.Setup(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()));
-
-        _basicApiService.ErrorMapper = errorMapper.Object;
+                .WithStatusCode(HttpStatusCode.BadRequest)
+                .WithBody(JsonSerializer.Serialize(problemDetails)));
 
         // Act
-        var response = await _basicApiService.Update(request);
+        var exception = await Record.ExceptionAsync(async () => await _basicApiService.GetDataAsync());
+
 
         // Assertions
-        Assert.Null(response);
-        errorMapper.Verify(x => x.HttpRequestFailed(It.IsAny<HttpResponseMessage>(), It.IsAny<HttpRequestException>()), Times.Once());
+        Assert.NotNull(exception);
+        Assert.IsType<YapeException>(exception);
     }
-
 
     [Fact]
     public async Task Get_ShouldFail_WhenBasicApiReturnsTimeoutException()
