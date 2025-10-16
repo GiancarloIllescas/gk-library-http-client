@@ -178,22 +178,25 @@ La libreria retorna los errores:
 Capturar estos errores se puede realizar mediante el uso del tradicional ```try..catch```, pero
 tambien se puede hacer uso de un manejador de los errores.
 
-Como base se cuenta con la interface ```IHttpErrorMapper``` la cual puede extenderse
+Aplicar control custom de errores se debe heredar de la clase abstract ```HttpErrorMapperBase``` 
 
 ```csharp
-    public class HttpErrorMapperCustom: IHttpErrorMapper
+    public class HttpErrorMapperCustom: HttpErrorMapperBase
     {
         //aqui implementacion
     }
 ```
 
-Se debe registrar esta nueve interface
+Pudiendo dentro de la clase detallar los metodos
 
-```csharp
- services.AddScoped<IHttpErrorMapper, HttpErrorMapperCustom>();
-```
+- HttpRequestFailed
+- TimeoutFailed
+- BrokenCircuitFailed
+- GeneralErrorOccurred
 
-Para luego asignarla en el servicio
+Por defecto sino se indica nada se controla los errores parseando mensajes de ``` ProblemDetails``` 
+
+Para luego asignarla en el servicio mediante options
 
 
 ```csharp
