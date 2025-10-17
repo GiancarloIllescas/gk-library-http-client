@@ -1,40 +1,39 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
-{
-    public class HttpHeaders
-    {
-        private readonly IHeaderDictionary? _requestHeaders;
-        private readonly List<string> _headerList;
+namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http;
 
-        public HttpHeaders(IHttpContextAccessor _httpContextAccessor)
+public class HttpHeaders
+{
+    private readonly IHeaderDictionary? _requestHeaders;
+    private readonly List<string> _headerList;
+
+    public HttpHeaders(IHttpContextAccessor _httpContextAccessor)
+    {
+        _requestHeaders = _httpContextAccessor.HttpContext?.Request.Headers;
+        _headerList = new List<string>()
         {
-            _requestHeaders = _httpContextAccessor.HttpContext?.Request.Headers;
-            _headerList = new List<string>()
-            {
-                "X-Correlation-Id",
-                "Request-Date",
-                "Channel"
-            };
+            "X-Correlation-Id",
+            "Request-Date",
+            "Channel"
+        };
+    }
+
+    public void AddHeaders(ref IDictionary<string, string> headers)
+    {
+
+        if (headers == null)
+        {
+            headers = new Dictionary<string, string>();
         }
 
-        public void AddHeaders(ref IDictionary<string, string> headers)
+        foreach (var item in _headerList)
         {
-
-            if (headers == null)
+            if (_requestHeaders != null && _requestHeaders.ContainsKey(item))
             {
-                headers = new Dictionary<string, string>();
+                headers.TryAdd(item, _requestHeaders[item].FirstOrDefault());
             }
-
-            foreach (var item in _headerList)
-            {
-                if (_requestHeaders != null && _requestHeaders.ContainsKey(item))
-                {
-                    headers.TryAdd(item, _requestHeaders[item].FirstOrDefault());
-                }
-            }
-
         }
 
     }
+
 }

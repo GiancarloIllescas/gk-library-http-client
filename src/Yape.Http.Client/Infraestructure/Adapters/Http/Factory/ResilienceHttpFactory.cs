@@ -2,44 +2,42 @@
 using Microsoft.Extensions.Logging;
 using Yape.Library.Http.Client.Domain.Port;
 
-namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http
+namespace Yape.Library.Http.Client.Infraestructure.Adapters.Http;
+
+public class ResilienceHttpFactory : IResilienceHttpFactory
 {
-    public class ResilienceHttpFactory : IResilienceHttpFactory
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger _logger;
+
+    public ResilienceHttpFactory(ILogger<ResilientHttpClient> logger, IHttpContextAccessor httpContextAccessor)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger _logger;
+        _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
+    }
 
-        public ResilienceHttpFactory(ILogger<ResilientHttpClient> logger, IHttpContextAccessor httpContextAccessor)
+    public IResilientHttpClient Create(HttpClient httpClient, HttpClientOptions? httpClientOptions = null)
+    {
+        if(httpClientOptions == null)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
+            httpClientOptions = new HttpClientOptions();
         }
 
-        public IResilientHttpClient Create(HttpClient httpClient, HttpClientOptions? httpClientOptions = null)
+        HttpHeaders? headersRequired = null;
+        if (httpClientOptions.IncludeHeadersRequired)
         {
-            if(httpClientOptions == null)
-            {
-                httpClientOptions = new HttpClientOptions();
-            }
-
-            HttpHeaders? headersRequired = null;
-            if (httpClientOptions.IncludeHeadersRequired)
-            {
-                headersRequired = new HttpHeaders(_httpContextAccessor);
-            }
-
-            HttpErrorMapperBase errorMapper = new HttpErrorMapperDefault(_logger);
-            if (httpClientOptions.ErrorMapper != null)
-            {
-                errorMapper = httpClientOptions.ErrorMapper;
-            }
-
-            var resilientHttpClient = new ResilientHttpClient(httpClient, _logger, errorMapper, headersRequired);
-
-
-            return resilientHttpClient;
+            headersRequired = new HttpHeaders(_httpContextAccessor);
         }
 
+        HttpErrorMapperBase errorMapper = new HttpErrorMapperDefault(_logger);
+        if (httpClientOptions.ErrorMapper != null)
+        {
+            errorMapper = httpClientOptions.ErrorMapper;
+        }
+
+        var resilientHttpClient = new ResilientHttpClient(httpClient, _logger, errorMapper, headersRequired);
+
+
+        return resilientHttpClient;
     }
 
 }

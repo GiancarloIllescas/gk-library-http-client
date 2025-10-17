@@ -205,12 +205,12 @@ public class BasicApiService : IBasicApiService
     private readonly IResilientHttpClient _httpClient;
 
     public BasicApiService(HttpClient httpClient, 
-        IResilienceHttpFactory resilienceHttpFactory, 
-        IHttpErrorMapper errorMapper)
+        IResilienceHttpFactory resilienceHttpFactory,
+        ILogger<BasicApiService> logger)
     {
         var options = new HttpClientOptions()
         {
-            ErrorMapper = errorMapper
+            ErrorMapper = new HttpErrorMapperCustom(logger)
         };
 
         _httpClient = resilienceHttpFactory.Create(httpClient, options);
@@ -254,8 +254,7 @@ public class BasicApiService : IBasicApiService
     private readonly IResilientHttpClient _httpClient;
 
     public BasicApiService(HttpClient httpClient, 
-        IResilienceHttpFactory resilienceHttpFactory, 
-        IHttpErrorMapper errorMapper)
+        IResilienceHttpFactory resilienceHttpFactory)
     {
         var options = new HttpClientOptions()
         {
@@ -271,3 +270,13 @@ public class BasicApiService : IBasicApiService
     }
 }
 ```
+
+### Dependencias
+
+La libreria requiere del HttpContextAccesor para el acceso a los headers, es por eso que debe validarse que se tenga la linea
+
+```csharp
+builder.Services.AddHttpContextAccessor();
+```
+
+en el ```Program.cs```
