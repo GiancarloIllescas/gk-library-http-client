@@ -3,7 +3,7 @@ Libreria para Request HTTP implementando configuracion de TimeOut, Retry y Circu
 
 # Instalacion
 
-Se debe agregar la referencia a la libreria ```Yape.Library.Http.Client ```
+Se debe agregar la referencia a la libreria ```GK.Library.Http.Client ```
 
 
 # Integracion en el proyecto
@@ -17,7 +17,7 @@ Crear la clase donde se quiere inyectar la libreria http
 
 ```csharp
 using Microsoft.Extensions.Logging;
-using Yape.Http.Client.Infraestructure.Adapters.Http;
+using GK.Http.Client.Infraestructure.Adapters.Http;
 
 public class BasicApiService : IBasicApiService
 {
@@ -51,7 +51,7 @@ uso de funcionalidad mejorada, por eso es que se utiliza el ```CreateExtension()
 Utilizar el namespace 
 
 ```csharp
-using Yape.Library.Http.Client.Extensions;
+using GK.Library.Http.Client.Extensions;
 ```
 
 Para luego registrar el servicio
