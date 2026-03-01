@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Yape.Library.ErrorBuilder.Domain.Builder;
+using GK.Library.Http.Client.ErrorBuilder.Domain.Builder;
 
 
 namespace GK.Library.Http.Client.Infraestructure.Adapters.Http;
@@ -19,7 +19,7 @@ public class HttpErrorMapperDefault : HttpErrorMapperBase
     {
         bool result = false;
 
-        if (response.Content.Headers.ContentLength == 0) // Manejar respuestas vacías 
+        if (response.Content.Headers.ContentLength == 0) // Manejar respuestas vacï¿½as 
         {
             return true;
         }
@@ -41,7 +41,7 @@ public class HttpErrorMapperDefault : HttpErrorMapperBase
 
         if (problemDetails != null)
         {
-            throw new YapeGeneralExceptionBuilder()
+            throw new GkGeneralExceptionBuilder()
             {
                 Status = (HttpStatusCode)problemDetails.Status.GetValueOrDefault(),
                 ErrorCode = problemDetails.Type,

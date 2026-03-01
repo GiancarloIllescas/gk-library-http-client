@@ -1,24 +1,24 @@
-using System.Net;
+// This file is deprecated. Use GK.Library.Http.Client.ErrorBuilder.Domain.GkException instead.
+// This file is kept for backward compatibility only.
 
 namespace Yape.Library.ErrorBuilder.Domain;
 
-public class YapeException : Exception
+[Obsolete("Use GK.Library.Http.Client.ErrorBuilder.Domain.GkException instead.", false)]
+public class YapeException : GK.Library.Http.Client.ErrorBuilder.Domain.GkException
 {
-    public HttpStatusCode Status { get; set; }
-    public string? ErrorCode { get; set; }
-    public string? Title { get; set; }
-    public string? Detail { get; set; }
-    public IDictionary<string, object?>? Extensions { get; set; }
-
     public YapeException()
+        : base()
     {
     }
 
-    public YapeException(string? message) : base(message)
+    public YapeException(string? message)
+        : base(message)
     {
     }
 
-    public YapeException(string? message, Exception? innerException) : base(message, innerException)
+    public YapeException(string? message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 }
+

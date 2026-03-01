@@ -3,7 +3,7 @@ using System.Net;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using Yape.Library.ErrorBuilder.Domain;
+using GK.Library.Http.Client.ErrorBuilder.Domain;
 using GK.Library.Http.Client.Test.Entities;
 
 namespace GK.Library.Http.Client.Test;
@@ -132,7 +132,7 @@ public class BasicHttpTest : IntegrationTestBase
 
         // Assertions
         Assert.NotNull(exception);
-        Assert.IsAssignableFrom<YapeException>(exception);
+        Assert.IsAssignableFrom<GkException>(exception);
     }
 
     [Fact]
