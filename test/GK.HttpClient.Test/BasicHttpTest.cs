@@ -33,7 +33,7 @@ public class BasicHttpTest : IntegrationTestBase
         Assert.NotNull(account);
         Assert.Equal("Mocked Data", account.Description);
 
-        // Verificar que tu aplicación realmente llamó al mock server
+        // Verificar que tu aplicaciï¿½n realmente llamï¿½ al mock server
         var findEntries = _mockServer.FindLogEntries(
             Request.Create().WithPath("/basic-api/data").UsingGet()
         );
@@ -61,7 +61,7 @@ public class BasicHttpTest : IntegrationTestBase
         Assert.NotNull(account);
         Assert.Equal(1, account.Id);
 
-        // Verificar que tu aplicación realmente llamó al mock server
+        // Verificar que tu aplicaciï¿½n realmente llamï¿½ al mock server
         var findEntries = _mockServer.FindLogEntries(
             Request.Create().WithPath("/basic-api").UsingPost()
         );
@@ -84,7 +84,7 @@ public class BasicHttpTest : IntegrationTestBase
         // Act
         await _basicApiService.Delete(itemIdToDelete);
 
-        // Verificar que tu aplicación realmente llamó al mock server
+        // Verificar que tu aplicaciï¿½n realmente llamï¿½ al mock server
         var findEntries = _mockServer.FindLogEntries(
             Request.Create().WithPath(uri).UsingDelete()
         );
@@ -132,7 +132,7 @@ public class BasicHttpTest : IntegrationTestBase
 
         // Assertions
         Assert.NotNull(exception);
-        Assert.IsType<YapeException>(exception);
+        Assert.IsAssignableFrom<YapeException>(exception);
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class BasicHttpTest : IntegrationTestBase
         Assert.NotNull(account);
         Assert.Equal("Mocked Data", account.Description);
 
-        // Verificar que tu aplicación realmente llamó al mock server
+        // Verificar que tu aplicaciï¿½n realmente llamï¿½ al mock server
         var findEntries = _mockServer.FindLogEntries(
             Request.Create().WithPath("/basic-api/data").UsingGet()
         );
